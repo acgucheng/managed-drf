@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: review-db
   namespace: hotel
+  labels:
+    app: review-db
 spec:
   replicas: 1
   selector:
@@ -20,16 +22,15 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           value: rootpassword
         - name: MYSQL_DATABASE
-          value: calendardb
-        restartPolicy: Always
+          value: reviewdb
         ports:
         - containerPort: 3306
         volumeMounts:
-        - name: review_db_data
+        - name: review-db-data
           mountPath: /var/lib/mysql
   volumeClaimTemplates:
   - metadata:
-      name: review_db-data
+      name: review-db-data
     spec:
       accessModes: ["ReadWriteOnce"]
       resources:

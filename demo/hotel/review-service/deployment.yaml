@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: review-service
-        image: lyricwang/mini-service-review-service
+        image: lyricwang/mini-service-review-service:v1
         env:
         - name: SPRING_DATASOURCE_URL
           value: jdbc:mysql://review-db:3306/reviewdb
@@ -23,6 +23,5 @@ spec:
           value: root
         - name: SPRING_DATASOURCE_PASSWORD
           value: rootpassword
-        restartPolicy: Always
-    ports:
-      - containerPort: 8080
+        ports:
+          - containerPort: 8080
