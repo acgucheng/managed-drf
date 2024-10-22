@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-service
+  namespace: hotel
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: review-service
+  template:
+    metadata:
+      labels:
+        app: review-service
+    spec:
+      containers:
+      - name: review-service
+        image: lyricwang/mini-service-review-service
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://review-db:3306/reviewdb
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: rootpassword
+        restartPolicy: Always
+    ports:
+      - containerPort: 8080

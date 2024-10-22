@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: review-db
+  namespace: hotel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: review-db
+  template:
+    metadata:
+      labels:
+        app: review-db
+    spec:
+      containers:
+      - name: review-db
+        image: mysql:8
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: rootpassword
+        - name: MYSQL_DATABASE
+          value: calendardb
+        restartPolicy: Always
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: review_db_data
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: review_db-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
