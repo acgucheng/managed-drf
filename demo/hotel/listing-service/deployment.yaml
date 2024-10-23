@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: review-service
+  name: listing-service
   namespace: hotel
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: review-service
+      app: listing-service
   template:
     metadata:
       labels:
-        app: review-service
+        app: listing-service
     spec:
       containers:
-      - name: review-service
-        image: lyricwang/mini-service-review-service:v1
+      - name: listing-service
+        image: lyricwang/mini-service-listing-service:v1
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://review-db:3306/reviewdb
+          value: jdbc:mysql://listing-db:3306/listingdb
         - name: SPRING_DATASOURCE_USERNAME
           value: root
         - name: SPRING_DATASOURCE_PASSWORD

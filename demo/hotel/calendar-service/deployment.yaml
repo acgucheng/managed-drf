@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: review-service
+  name: calendar-service
   namespace: hotel
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: review-service
+      app: calendar-service
   template:
     metadata:
       labels:
-        app: review-service
+        app: calendar-service
     spec:
       containers:
-      - name: review-service
-        image: lyricwang/mini-service-review-service:v1
+      - name: calendar-service
+        image: lyricwang/mini-service-calendar-service:v1
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://review-db:3306/reviewdb
+          value: jdbc:mysql://calendar-db:3306/calendardb
         - name: SPRING_DATASOURCE_USERNAME
           value: root
         - name: SPRING_DATASOURCE_PASSWORD
