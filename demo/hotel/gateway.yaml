@@ -1,0 +1,51 @@
+# virtual-service-route.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: service-route
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - my-gateway  # 使用已创建的 Istio Gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/review"
+    route:
+    - destination:
+        host: review-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: "/listing"
+    route:
+    - destination:
+        host: listing-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: "/calendar"
+    route:
+    - destination:
+        host: calendar-service
+        port:
+          number: 8080
+---
+# gateway.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: hotel-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
