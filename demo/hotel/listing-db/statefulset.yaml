@@ -32,7 +32,29 @@ spec:
   - metadata:
       name: listing-db-data
     spec:
+      volumeName: listing-db-pv
       accessModes: ["ReadWriteOnce"]
       resources:
         requests:
           storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: listing-db-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /data/listing-db-volume
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kubenode-b

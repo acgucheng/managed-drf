@@ -4,7 +4,7 @@ metadata:
   name: listing-service
   namespace: hotel
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: listing-service
