@@ -1,0 +1,102 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: my-elasticsearch
+  namespace: istio-system
+spec:
+  version: 7.17.0
+  nodeSets:
+    - name: default
+      count: 3
+      config:
+        node.store.allow_mmap: false
+      volumeClaimTemplates:
+        - metadata:
+            name: elasticsearch-data
+          spec:
+            storageClassName: "es"
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: 2Gi
+---
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: my-kibana
+  namespace: istio-system
+spec:
+  version: 7.17.0
+  count: 1 
+  elasticsearchRef:
+    name: my-elasticsearch
+  http:
+    service:
+      spec:
+        type: LoadBalancer 
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvnode-es-a
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "es"
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /data/es/a
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kubenode-m
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvnode-es-b
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "es"
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /data/es/b
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kubenode-m
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvnode-es-c
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "es"
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: /data/es/c
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kubenode-m

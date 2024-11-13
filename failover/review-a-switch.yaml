@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v
+kind: VirtualService
+metadata:
+  name: reviewservice-hotel-b
+  namespace: hotel-a 
+spec:
+  hosts:
+  - review-service.hotel-a.svc.cluster.local
+  - review-service
+  tcp:
+  - route:
+    - destination:
+        host: listing-service.hotel-b.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: destination-rule-service-b
+  namespace: hotel-a
+spec:
+  host: review-service.hotel-b.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-service
+  namespace: hotel-a
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

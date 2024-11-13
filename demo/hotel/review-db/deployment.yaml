@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: review-db
-  namespace: hotel
+  namespace: hotel-a
   labels:
     app: review-db
 spec:

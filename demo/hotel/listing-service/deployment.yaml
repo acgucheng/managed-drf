@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: listing-service
-  namespace: hotel
+  namespace: hotel-a
 spec:
   replicas: 1
   selector:
@@ -13,15 +13,89 @@ spec:
       labels:
         app: listing-service
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubenode-a
       containers:
       - name: listing-service
         image: lyricwang/mini-service-listing-service:v1
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://listing-db:3306/listingdb
+          value: jdbc:mysql://listing-db.hotel-b:3306/listingdb
         - name: SPRING_DATASOURCE_USERNAME
           value: root
         - name: SPRING_DATASOURCE_PASSWORD
           value: rootpassword
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: http://otel-collector.istio-system.svc.cluster.local:9411/api/v2/spans
+        - name: SPRING_APPLICATION_NAME
+          value: listing-service.hotel-a
+        ports:
+          - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: listing-service
+  namespace: hotel-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listing-service
+  template:
+    metadata:
+      labels:
+        app: listing-service
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubenode-b
+      containers:
+      - name: listing-service
+        image: lyricwang/mini-service-listing-service:v1
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://listing-db.hotel-b:3306/listingdb
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: rootpassword
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: http://otel-collector.istio-system.svc.cluster.local:9411/api/v2/spans
+        - name: SPRING_APPLICATION_NAME
+          value: listing-service.hotel-b
+        ports:
+          - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: listing-service
+  namespace: hotel-c
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: listing-service
+  template:
+    metadata:
+      labels:
+        app: listing-service
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubenode-c
+      containers:
+      - name: listing-service
+        image: lyricwang/mini-service-listing-service:v1
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://listing-db.hotel-b:3306/listingdb
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: rootpassword
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: http://otel-collector.istio-system.svc.cluster.local:9411/api/v2/spans
+        - name: SPRING_APPLICATION_NAME
+          value: listing-service.hotel-c
         ports:
           - containerPort: 8080

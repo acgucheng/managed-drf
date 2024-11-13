@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: calendar-service-a-to-b
+  namespace: hotel-a 
+spec:
+  hosts:
+  - calendar-service.hotel-a.svc.cluster.local
+  tcp:
+  - route:
+    - destination:
+        host: calendar-service.hotel-b.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: calendar-service-a-to-b
+  namespace: hotel-a
+spec:
+  host: calendar-service.hotel-b.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calendar-service
+  namespace: hotel-a
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

@@ -3,42 +3,80 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: service-route
+  namespace: hotel
 spec:
   hosts:
   - "*"
   gateways:
-  - my-gateway  # 使用已创建的 Istio Gateway
+  - hotel-gateway 
   http:
   - match:
     - uri:
         prefix: "/review"
     route:
     - destination:
-        host: review-service
+        host: review-service.hotel-a.svc.cluster.local
         port:
           number: 8080
+      weight: 33
+    - destination:
+        host: review-service.hotel-b.svc.cluster.local
+        port:
+          number: 8080
+      weight: 33
+    - destination:
+        host: review-service.hotel-c.svc.cluster.local
+        port:
+          number: 8080
+      weight: 34
+    timeout: "10s"
   - match:
     - uri:
         prefix: "/listing"
     route:
     - destination:
-        host: listing-service
+        host: listing-service.hotel-a.svc.cluster.local
         port:
           number: 8080
+      weight: 33
+    - destination:
+        host: listing-service.hotel-b.svc.cluster.local
+        port:
+          number: 8080
+      weight: 33
+    - destination:
+        host: listing-service.hotel-c.svc.cluster.local
+        port:
+          number: 8080
+      weight: 34
+    timeout: "10s"
   - match:
     - uri:
         prefix: "/calendar"
     route:
     - destination:
-        host: calendar-service
+        host: calendar-service.hotel-a.svc.cluster.local
         port:
           number: 8080
+      weight: 33
+    - destination:
+        host: calendar-service.hotel-b.svc.cluster.local
+        port:
+          number: 8080
+      weight: 33
+    - destination:
+        host: calendar-service.hotel-c.svc.cluster.local
+        port:
+          number: 8080
+      weight: 34
+    timeout: "10s"
 ---
 # gateway.yaml
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
   name: hotel-gateway
+  namespace: hotel
 spec:
   selector:
     istio: ingressgateway

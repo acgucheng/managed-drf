@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: calendar-service
-  namespace: hotel
+  namespace: hotel-a
 spec:
   replicas: 1
   selector:
@@ -13,15 +13,89 @@ spec:
       labels:
         app: calendar-service
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubenode-a
       containers:
       - name: calendar-service
         image: lyricwang/mini-service-calendar-service:v1
         env:
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://calendar-db:3306/calendardb
+          value: jdbc:mysql://calendar-db.hotel-b:3306/calendardb
         - name: SPRING_DATASOURCE_USERNAME
           value: root
         - name: SPRING_DATASOURCE_PASSWORD
           value: rootpassword
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: http://otel-collector.istio-system.svc.cluster.local:9411/api/v2/spans
+        - name: SPRING_APPLICATION_NAME
+          value: calendar-service.hotel-A
+        ports:
+          - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-service
+  namespace: hotel-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calendar-service
+  template:
+    metadata:
+      labels:
+        app: calendar-service
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubenode-b
+      containers:
+      - name: calendar-service
+        image: lyricwang/mini-service-calendar-service:v1
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://calendar-db.hotel-b:3306/calendardb
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: rootpassword
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: http://otel-collector.istio-system.svc.cluster.local:9411/api/v2/spans
+        - name: SPRING_APPLICATION_NAME
+          value: calendar-service.hotel-B
+        ports:
+          - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-service
+  namespace: hotel-c
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calendar-service
+  template:
+    metadata:
+      labels:
+        app: calendar-service
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: kubenode-c
+      containers:
+      - name: calendar-service
+        image: lyricwang/mini-service-calendar-service:v1
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://calendar-db.hotel-b:3306/calendardb
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: rootpassword
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: http://otel-collector.istio-system.svc.cluster.local:9411/api/v2/spans
+        - name: SPRING_APPLICATION_NAME
+          value: calendar-service.hotel-c
         ports:
           - containerPort: 8080
